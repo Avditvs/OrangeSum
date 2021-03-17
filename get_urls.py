@@ -51,29 +51,32 @@ def get_urls(cat):
 
 #  = = = = = parameters = = = = =
 
+
 my_parser = 'lxml'
 societe_subcats = ['sante','environnement','fait-divers','people','culture','media','high-tech','insolite']
 cats = ['france','monde','politique','auto'] + ['societe/' + elt for elt in societe_subcats] # stopped using 'finance' because of url extraction issues
 min_size = 50 # min nb of chars for a URL to be kept
 patience = 5
 
-# optional: load final URLs from previous run
-with open('./data/links/urls_final.txt', 'r', encoding='utf8') as file:
-    previous_run_urls = file.read().splitlines()
+if __name__ == '__main__':
 
-# remove categories, just keep URLs
-previous_run_urls = [elt.split(',')[1] for elt in previous_run_urls]
+    # optional: load final URLs from previous run
+    with open('./data/links/urls_final.txt', 'r', encoding='utf8') as file:
+        previous_run_urls = file.read().splitlines()
 
-n_cores = cpu_count()
+    # remove categories, just keep URLs
+    previous_run_urls = [elt.split(',')[1] for elt in previous_run_urls if len(elt.split(','))>1]
 
-start_time = time.time()   
-print(n_cores,'core(s) will be used')
-pool = Pool(processes=n_cores)
-urls_per_cat = pool.map(get_urls, cats)
-pool.close()
-pool.join()
-urls_per_cat = dict(zip(cats,urls_per_cat))
+    n_cores = cpu_count()
 
-print('= = = done in',round(time.time() - start_time,2),'sec(s)= = =')
+    start_time = time.time()   
+    print(n_cores,'core(s) will be used')
+    pool = Pool(processes=n_cores)
+    urls_per_cat = pool.map(get_urls, cats)
+    pool.close()
+    pool.join()
+    urls_per_cat = dict(zip(cats,urls_per_cat))
+
+    print('= = = done in',round(time.time() - start_time,2),'sec(s)= = =')
         
     
